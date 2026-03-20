@@ -45,3 +45,21 @@ jobs:
         with:
           push: true
           tags: janek9/hello-actions:latest
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 52.213.7.167
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull janek9/hello-actions:latest
+            docker stop hello-actions || true
+            docker rm hello-actions || true
+            docker run -d --name hello-actions -p 5000:5000 janek9/hello-actions:latest
