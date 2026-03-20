@@ -29,4 +29,4 @@ jobs:
 
       # 4. Run the tests
       - name: Run tests
-        run: pytest tests/ -v
+        run: PYTHONPATH=. pytest tests/ -v
